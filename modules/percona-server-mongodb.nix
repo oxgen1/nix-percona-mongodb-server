@@ -33,6 +33,7 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
+      default = pkgs.percona-server-mongodb;
       description = "The percona-server-mongodb package to use.";
     };
 
