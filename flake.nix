@@ -14,7 +14,9 @@
       systems = [ "x86_64-linux" ];
       perconaPackagesFor = system:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = import nixpkgs { 
+            config.allowUnfree = true;
+            inherit system; };
         in
         {
           percona-server-mongodb = pkgs.callPackage ./pkgs/percona-server-mongodb { };
@@ -40,6 +42,8 @@
         }:
         {
           imports = [ ./modules/percona-server-mongodb.nix ];
+              nixpkgs.config.allowUnfree = true;
+
           nixpkgs.overlays = [ self.overlays.default ];
         };
 
@@ -51,7 +55,6 @@
             { pkgs, modulesPath, ... }:
             {
               imports = [ (modulesPath + "/virtualisation/qemu-vm.nix") ];
-              nixpkgs.config.allowUnfree = true;
               virtualisation.memorySize = 4096;
               virtualisation.cores = 4;
               virtualisation.graphics = false;
