@@ -10,27 +10,14 @@
       self,
       nixpkgs,
     }:
-    let
-      systems = [ "x86_64-linux" ];
-      perconaPackagesFor = system:
-        let
-          pkgs = import nixpkgs { 
-            config.allowUnfree = true;
-            inherit system; };
-        in
-        {
-          percona-server-mongodb = pkgs.callPackage ./pkgs/percona-server-mongodb { };
-          mongosh = pkgs.callPackage ./pkgs/mongosh { };
-        };
-    in
     {
-      packages = nixpkgs.lib.genAttrs systems (system: perconaPackagesFor system // {
-        default = (perconaPackagesFor system).percona-server-mongodb;
-      });
+      # packages = nixpkgs.lib.genAttrs systems (system: perconaPackagesFor system // {
+      #   default = (perconaPackagesFor system).percona-server-mongodb;
+      # });
 
       overlays.default = final: prev: {
-        percona-server-mongodb = self.packages.${prev.system}.percona-server-mongodb;
-        percona-mongosh = self.packages.${prev.system}.mongosh;
+        percona-server-mongodb = final.callPackage ./pkgs/percona-server-mongodb { };
+        percona-mongosh = final.callPackage ./pkgs/mongosh { };
       };
 
       nixosModules.default =
